@@ -22,6 +22,9 @@ export interface TodosProps {
 
 export interface TodoProps {
   todo: Todo;
+  handleEdit: (todo: Todo, editingValues: Todo) => void;
+  toggleComplete: (todo: Todo) => void;
+  deleteTodo: (todo: Todo) => void;
 }
 
 export interface SettingsProps {

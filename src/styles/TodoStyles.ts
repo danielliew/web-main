@@ -8,7 +8,7 @@ export const useStyles = makeStyles((theme: Theme) =>
       alignItems: "center",
     },
     container: {
-      padding: theme.spacing(2),
+      padding: theme.spacing(1, 2),
     },
     todoContainer: {
       padding: theme.spacing(1),

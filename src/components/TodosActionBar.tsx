@@ -5,6 +5,8 @@ import {
   TextField,
   IconButton,
   Typography,
+  FormControlLabel,
+  Checkbox,
 } from "@material-ui/core";
 import { useStyles } from "../styles/TodoStyles";
 
@@ -24,11 +26,14 @@ const TodosActionBar: React.FC<TodosActionBarProps> = ({ getTodos }) => {
       if (res.status === successStatus && res.data.success) {
         setNewTodo(initialNewTodo);
         getTodos();
+        if (closeOnAdd) toggleOpen();
       }
     } catch (e) {
       console.error(e);
     }
   };
+
+  const [closeOnAdd, setCloseOnAdd] = useState(true);
 
   const [open, setOpen] = useState(false);
   const toggleOpen = () => setOpen((o) => !o);
@@ -83,6 +88,18 @@ const TodosActionBar: React.FC<TodosActionBarProps> = ({ getTodos }) => {
                 }
               />
             </div>
+            <div className={classes.container}>
+              <FormControlLabel
+                label="close after add"
+                control={
+                  <Checkbox
+                    checked={closeOnAdd}
+                    onChange={(e, c) => setCloseOnAdd(c)}
+                  />
+                }
+              />
+            </div>
+
             <div className={`${classes.centered} ${classes.container}`}>
               <Button type="submit" variant="contained" color="secondary">
                 Done

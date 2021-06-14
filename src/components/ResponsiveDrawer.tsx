@@ -80,7 +80,10 @@ export default function ResponsiveDrawer() {
   };
 
   const [current, setCurrent] = useState("Todos");
-  const handleSetCurrent = (c: string) => setCurrent(c);
+  const handleSetCurrent = (c: string) => {
+    setCurrent(c);
+    setMobileOpen(false);
+  };
 
   const [settings, setSettings] = useState({
     serverLocation: serverLocations[0],
