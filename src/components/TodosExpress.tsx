@@ -6,7 +6,7 @@ import { successStatus } from "../constants";
 import TodosActionBar from "./TodosActionBar";
 import { useStyles } from "../styles/TodoStyles";
 import Todo from "./Todo";
-import { Todo as TodoType, TodosProps } from "../types";
+import { Todo as TodoType, TodoContent, TodosProps } from "../types";
 
 const Todos: React.FC<TodosProps> = ({ completed }) => {
   const classes = useStyles();
@@ -23,13 +23,27 @@ const Todos: React.FC<TodosProps> = ({ completed }) => {
     }
   };
 
+  const addTodo = async (values: TodoContent) => {
+    try {
+      let res = await expressApi.post("/todos", values);
+      if (res.status === successStatus && res.data.success) {
+        getTodos();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
+  };
+
   const toggleComplete = async (todo: TodoType) => {
     try {
       let res = await expressApi.put(`/todos/${todo.id}`, {
         ...todo,
         complete: !todo.complete,
       });
-      if (res.status === successStatus) getTodos();
+      if (res.status === successStatus && res.data.success) getTodos();
     } catch (e) {
       console.error(e);
     }
@@ -41,7 +55,7 @@ const Todos: React.FC<TodosProps> = ({ completed }) => {
         ...todo,
         ...editingValues,
       });
-      if (res.status === successStatus) {
+      if (res.status === successStatus && res.data.success) {
         getTodos();
       }
     } catch (e) {
@@ -52,7 +66,7 @@ const Todos: React.FC<TodosProps> = ({ completed }) => {
   const deleteTodo = async (todo: TodoType) => {
     try {
       let res = await expressApi.delete(`/todos/${todo.id}`);
-      if (res.status === successStatus) getTodos();
+      if (res.status === successStatus && res.data.success) getTodos();
     } catch (e) {
       console.error(e);
     }
@@ -68,7 +82,7 @@ const Todos: React.FC<TodosProps> = ({ completed }) => {
       {!completed && (
         <React.Fragment>
           <div>
-            <TodosActionBar getTodos={getTodos} />
+            <TodosActionBar addNewTodo={addTodo} />
           </div>
           <Divider style={{ margin: "2vh 0px" }} />
         </React.Fragment>

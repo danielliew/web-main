@@ -5,13 +5,18 @@ import {
   MenuItem,
   Divider,
   Paper,
+  Button,
 } from "@material-ui/core";
 
 import { SettingsProps } from "../types";
 import { useStyles } from "../styles/TodoStyles";
 import { serverLocations, serverLocationsDesc } from "../constants";
 
-const Settings: React.FC<SettingsProps> = ({ serverLocation, setSettings }) => {
+const Settings: React.FC<SettingsProps> = ({
+  serverLocation,
+  setSettings,
+  onLogOut,
+}) => {
   const classes = useStyles();
 
   const handleServerLocation = (e: React.ChangeEvent<{ value: unknown }>) => {
@@ -19,6 +24,8 @@ const Settings: React.FC<SettingsProps> = ({ serverLocation, setSettings }) => {
       serverLocation: e.target.value as string,
     });
   };
+
+  const handleLogOut = () => onLogOut();
 
   return (
     <div>
@@ -30,11 +37,20 @@ const Settings: React.FC<SettingsProps> = ({ serverLocation, setSettings }) => {
           <Typography>Server Location</Typography>
           <Select value={serverLocation} onChange={handleServerLocation}>
             {serverLocations.map((s, i) => (
-              <MenuItem value={s}>
+              <MenuItem value={s} key={i}>
                 {s} ({serverLocationsDesc[i]})
               </MenuItem>
             ))}
           </Select>
+        </div>
+
+        <div
+          className={`${classes.container} ${classes.justifiyContentBetween}`}
+        >
+          <Typography>Log Out</Typography>
+          <Button onClick={handleLogOut} variant="outlined">
+            Log Out
+          </Button>
         </div>
       </Paper>
     </div>

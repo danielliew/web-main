@@ -2,7 +2,9 @@ import React from "react";
 import { ThemeProvider, createMuiTheme } from "@material-ui/core";
 
 import "./styles/App.css";
-import ResponsiveDrawer from "./components/ResponsiveDrawer";
+import UserAuth from "./controllers/UserAuth";
+import { ApolloProvider } from "@apollo/client";
+import gqlApi from "./api/gqlApi";
 
 const theme = createMuiTheme({
   palette: {
@@ -18,7 +20,9 @@ const theme = createMuiTheme({
 function App() {
   return (
     <ThemeProvider theme={theme}>
-      <ResponsiveDrawer />
+      <ApolloProvider client={gqlApi}>
+        <UserAuth />
+      </ApolloProvider>
     </ThemeProvider>
   );
 }

@@ -1,9 +1,11 @@
 import axios from "axios";
-import { developmentUrl, productionUrl } from "./api.routes";
+import { expressDevelopmentUrl, expressProductionUrl } from "./api.routes";
 
 const expressApi = axios.create({
   baseURL:
-    process.env.NODE_ENV === "production" ? productionUrl : developmentUrl,
+    process.env.NODE_ENV === "production"
+      ? expressProductionUrl
+      : expressDevelopmentUrl,
 });
 
 expressApi.interceptors.response.use(

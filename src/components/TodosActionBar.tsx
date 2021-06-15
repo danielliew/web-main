@@ -11,25 +11,19 @@ import {
 import { useStyles } from "../styles/TodoStyles";
 
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
-import expressApi from "../api/expressApi";
-import { successStatus, initialNewTodo } from "../constants";
-import { TodosActionBarProps } from "../types";
+import { initialNewTodo } from "../constants";
+import { TodoContent, TodosActionBarProps } from "../types";
 
-const TodosActionBar: React.FC<TodosActionBarProps> = ({ getTodos }) => {
+const TodosActionBar: React.FC<TodosActionBarProps> = ({ addNewTodo }) => {
   const classes = useStyles();
 
-  const [newTodo, setNewTodo] = useState(initialNewTodo);
+  const [newTodo, setNewTodo] = useState<TodoContent>(initialNewTodo);
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      let res = await expressApi.post("/todos", newTodo);
-      if (res.status === successStatus && res.data.success) {
-        setNewTodo(initialNewTodo);
-        getTodos();
-        if (closeOnAdd) toggleOpen();
-      }
-    } catch (e) {
-      console.error(e);
+    const res = await addNewTodo(newTodo);
+    if (res) {
+      setNewTodo(initialNewTodo);
+      if (closeOnAdd) toggleOpen();
     }
   };
 
