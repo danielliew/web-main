@@ -28,6 +28,18 @@ export const useStyles = makeStyles((theme: Theme) =>
       alignItems: "center",
       width: "100%",
     },
+    row: {
+      display: "flex",
+      flexDirection: "row",
+    },
+    reply: {
+      marginLeft: "33px",
+      borderLeftWidth: "2px",
+      borderStyle: "solid",
+      borderRightWidth: "0px",
+      borderTopWidth: "0px",
+      borderBottomWidth: "0px",
+    },
   })
 );
 

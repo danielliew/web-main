@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Typography,
   Select,
@@ -8,9 +8,11 @@ import {
   Button,
 } from "@material-ui/core";
 
-import { SettingsProps } from "../types";
+import { LoginValues, SettingsProps } from "../types";
 import { useStyles } from "../styles/TodoStyles";
 import { serverLocations, serverLocationsDesc } from "../constants";
+
+import { getUser } from "../controllers/UserAuth";
 
 const Settings: React.FC<SettingsProps> = ({
   serverLocation,
@@ -26,6 +28,14 @@ const Settings: React.FC<SettingsProps> = ({
   };
 
   const handleLogOut = () => onLogOut();
+
+  const [user, setUser] = useState<LoginValues>({ username: "" });
+
+  useEffect(() => {
+    setUser(getUser());
+
+    if (!serverLocation) setSettings({ serverLocation: "Kuala Lumpur" });
+  }, []);
 
   return (
     <div>
@@ -47,7 +57,7 @@ const Settings: React.FC<SettingsProps> = ({
         <div
           className={`${classes.container} ${classes.justifiyContentBetween}`}
         >
-          <Typography>Log Out</Typography>
+          <Typography>Logged in as {user.username}</Typography>
           <Button onClick={handleLogOut} variant="outlined">
             Log Out
           </Button>

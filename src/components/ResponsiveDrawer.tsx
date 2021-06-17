@@ -13,7 +13,9 @@ import {
   Toolbar,
   Typography,
   Breadcrumbs,
+  Avatar,
 } from "@material-ui/core";
+import { AvatarGroup } from "@material-ui/lab";
 import { useTheme } from "@material-ui/core/styles";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 
@@ -23,14 +25,25 @@ import SettingsIcon from "@material-ui/icons/Settings";
 import MenuIcon from "@material-ui/icons/Menu";
 import { location1, location2, serverLocations } from "../constants";
 import { ResponsiveDrawerProps } from "../types";
-import { useResponsiveStyles } from "../styles/TodoStyles";
+import { useResponsiveStyles, useStyles } from "../styles/TodoStyles";
+import useSocketApi from "../hooks/useSocketApi";
+import { getUser } from "../controllers/UserAuth";
 
-const TodosExpress = lazy(() => import("./TodosExpress"));
-const TodosGql = lazy(() => import("./TodosGql"));
+const TodosExpress = lazy(() => import("./services/TodosExpress"));
+const TodosGql = lazy(() => import("./services/TodosGql"));
 const Settings = lazy(() => import("./Settings"));
 const Home = lazy(() => import("./Home"));
 
+const decode = (index: number) => {
+  try {
+    return decodeURI(window.location.href.split("/")[index]);
+  } catch (e) {
+    return "Invalid URL";
+  }
+};
+
 const ResponsiveDrawer: React.FC<ResponsiveDrawerProps> = ({ onLogOut }) => {
+  const classes1 = useStyles();
   const classes = useResponsiveStyles();
   const theme = useTheme();
 
@@ -39,18 +52,21 @@ const ResponsiveDrawer: React.FC<ResponsiveDrawerProps> = ({ onLogOut }) => {
     setMobileOpen(!mobileOpen);
   };
 
-  const [current, setCurrent] = useState(
-    decodeURI(window.location.href.split("/")[4])
-  );
+  const [current, setCurrent] = useState(decode(4));
   const handleSetCurrent = (c: string) => {
     setCurrent(c);
     setMobileOpen(false);
   };
 
   const [settings, setSettings] = useState({
-    serverLocation:
-      decodeURI(window.location.href.split("/")[3]) || serverLocations[0],
+    serverLocation: serverLocations.includes(decode(3))
+      ? decode(3)
+      : serverLocations[0],
   });
+
+  const [clientList, setClientList] = useState<string[]>([]);
+
+  useSocketApi(getUser(), setClientList);
 
   const drawer = (
     <React.Fragment>
@@ -156,17 +172,26 @@ const ResponsiveDrawer: React.FC<ResponsiveDrawerProps> = ({ onLogOut }) => {
         </nav>
         <main className={classes.content}>
           <div className={classes.toolbar} />
-          <div className={classes.breadcrumb}>
-            <Breadcrumbs>
-              <Typography
-                to={`/`}
-                component={Link}
-                onClick={() => handleSetCurrent("undefined")}
-              >
-                {settings.serverLocation}
-              </Typography>
-              {current !== "undefined" && <Typography>{current}</Typography>}
-            </Breadcrumbs>
+          <div className={classes1.justifiyContentBetween}>
+            <div className={classes.breadcrumb}>
+              <Breadcrumbs>
+                <Typography
+                  to={`/`}
+                  component={Link}
+                  onClick={() => handleSetCurrent("undefined")}
+                >
+                  {settings.serverLocation}
+                </Typography>
+                {current !== "undefined" && <Typography>{current}</Typography>}
+              </Breadcrumbs>
+            </div>
+            <div className={classes1.row}>
+              <AvatarGroup max={4}>
+                {clientList.map((c, i) => (
+                  <Avatar>{c[0]}</Avatar>
+                ))}
+              </AvatarGroup>
+            </div>
           </div>
           <Suspense fallback={<p>Loading...</p>}>
             <Switch>
@@ -195,6 +220,10 @@ const ResponsiveDrawer: React.FC<ResponsiveDrawerProps> = ({ onLogOut }) => {
                   setSettings={setSettings}
                   onLogOut={onLogOut}
                 />
+              </Route>
+
+              <Route path="/*">
+                <p>This page doesnt exist</p>
               </Route>
             </Switch>
           </Suspense>

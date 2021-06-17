@@ -6,18 +6,21 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link,
   Redirect,
 } from "react-router-dom";
+import { LoginValues } from "../types";
+
+export const getUser = (): LoginValues =>
+  JSON.parse(localStorage.getItem("user") || "{}");
 
 const UserAuth = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(
     localStorage.getItem("user") ? true : false
   );
 
-  const onLogIn = () => {
+  const onLogIn = (u: LoginValues) => {
     // call IAM service
-    localStorage.setItem("user", "logged in");
+    localStorage.setItem("user", JSON.stringify(u));
     setIsLoggedIn(true);
   };
 

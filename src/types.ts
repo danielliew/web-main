@@ -20,6 +20,30 @@ export interface Settings {
   serverLocation: string;
 }
 
+export interface LoginValues {
+  username: string;
+}
+
+export interface TodoReply {
+  id: string;
+  todoCommentId: string;
+  username: string;
+  reply: string;
+  timestamp: string;
+}
+
+export interface TodoComment {
+  id: string;
+  comment: string;
+  username: string;
+  timestamp: string;
+  todoId: string;
+}
+
+export interface TodoCommentWithReply extends TodoComment {
+  replies: TodoReply[];
+}
+
 // gql
 
 export interface GqlFieldList {
@@ -27,7 +51,7 @@ export interface GqlFieldList {
   type: string;
 }
 export interface TodoList {
-  todos: Todo[];
+  todos: Todo[] | undefined;
 }
 
 export interface TodoListVariables {
@@ -39,12 +63,11 @@ interface ApolloErrorType {
   error: ApolloError | undefined;
 }
 
-export interface UseGetTodosRes extends ApolloErrorType {
+export interface UseGetTodosRes extends ApolloErrorType, TodoList {
   fetchTodos: (
     options?: QueryLazyOptions<TodoListVariables> | undefined
   ) => void;
   loading: boolean;
-  todos: TodoList | undefined;
 }
 
 export interface UseToggleCompleteRes extends ApolloErrorType {
@@ -81,15 +104,26 @@ export interface TodosActionBarProps {
   addNewTodo: (t: TodoContent) => Promise<boolean>;
 }
 
-export interface TodosProps {
+export interface TodosServiceProps {
   completed?: boolean;
 }
 
-export interface TodoProps {
-  todo: Todo;
+export interface TodosProps
+  extends TodosServiceProps,
+    TodosActionBarProps,
+    TodoActions,
+    TodoList {
+  getTodos: () => void;
+}
+
+interface TodoActions {
   handleEdit: (todo: Todo, editingValues: Todo) => void;
   toggleComplete: (todo: Todo) => void;
   deleteTodo: (todo: Todo) => void;
+}
+export interface TodoProps extends TodoActions {
+  todo: Todo;
+  comments: TodoCommentWithReply[];
 }
 
 export interface SettingsProps {
@@ -104,5 +138,24 @@ export interface HomeProps {
 }
 
 export interface LoginProps {
-  onLogIn: () => void;
+  onLogIn: (l: LoginValues) => void;
+}
+
+export interface FeedbackCardProps {
+  currentUser: string;
+  canReply?: boolean;
+  onNewReply?: (commentid: string) => void;
+  user: string;
+  title: string;
+  subheader: string;
+  itemId?: string;
+  handleEdit: (id: string, v: string) => void;
+  handleDelete: (id: string) => void;
+}
+
+export interface TodoCommentsRepliesProps {
+  newComment: boolean;
+  setNewComment: (b: boolean) => void;
+  todoId: string;
+  comments: TodoCommentWithReply[];
 }

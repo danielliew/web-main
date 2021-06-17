@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from "react";
-import { Typography, Divider } from "@material-ui/core";
+import React, { useState } from "react";
 
-import expressApi from "../api/expressApi";
-import { successStatus } from "../constants";
-import TodosActionBar from "./TodosActionBar";
-import { useStyles } from "../styles/TodoStyles";
-import Todo from "./Todo";
-import { Todo as TodoType, TodoContent, TodosProps } from "../types";
+import expressApi from "../../api/expressApi";
+import { successStatus } from "../../constants";
+import Todos from "../Todos";
+import {
+  Todo,
+  Todo as TodoType,
+  TodoContent,
+  TodosServiceProps,
+} from "../../types";
 
-const Todos: React.FC<TodosProps> = ({ completed }) => {
-  const classes = useStyles();
-
-  const [todos, setTodos] = useState([]);
+const TodosExpress: React.FC<TodosServiceProps> = ({ completed }) => {
+  const [todos, setTodos] = useState<Todo[]>([]);
   const getTodos = async () => {
     try {
       let res;
@@ -72,40 +72,17 @@ const Todos: React.FC<TodosProps> = ({ completed }) => {
     }
   };
 
-  useEffect(() => {
-    getTodos();
-    // eslint-disable-next-line
-  }, []);
-
   return (
-    <div>
-      {!completed && (
-        <React.Fragment>
-          <div>
-            <TodosActionBar addNewTodo={addTodo} />
-          </div>
-          <Divider style={{ margin: "2vh 0px" }} />
-        </React.Fragment>
-      )}
-      <div className={classes.todosContainer}>
-        {todos.length ? (
-          todos.map((todo, i) => (
-            <Todo
-              todo={todo}
-              key={i}
-              handleEdit={handleEdit}
-              toggleComplete={toggleComplete}
-              deleteTodo={deleteTodo}
-            />
-          ))
-        ) : (
-          <div className={classes.centered}>
-            <Typography variant="caption">None found</Typography>
-          </div>
-        )}
-      </div>
-    </div>
+    <Todos
+      todos={todos}
+      getTodos={getTodos}
+      addNewTodo={addTodo}
+      handleEdit={handleEdit}
+      toggleComplete={toggleComplete}
+      deleteTodo={deleteTodo}
+      completed={completed}
+    />
   );
 };
 
-export default Todos;
+export default TodosExpress;
