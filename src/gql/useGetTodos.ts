@@ -1,10 +1,10 @@
 import { useLazyQuery } from "@apollo/client";
-import { Todo, TodoListVariables, UseGetTodosRes } from "../types";
+import { TodoList, TodoListVariables, UseGetTodosRes } from "../types";
 import { GET_TODOS } from "./gqlDefs";
 
 const useGetTodos = (completed: boolean | undefined): UseGetTodosRes => {
   const [fetchTodos, { loading, data, error }] = useLazyQuery<
-    Todo[],
+    TodoList,
     TodoListVariables
   >(GET_TODOS, {
     variables: {
@@ -12,7 +12,8 @@ const useGetTodos = (completed: boolean | undefined): UseGetTodosRes => {
       complete: completed,
     },
   });
-  return { fetchTodos, loading, todos: data, error };
+
+  return { fetchTodos, loading, todos: data ? data.todos : [], error };
 };
 
 export default useGetTodos;

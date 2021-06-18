@@ -191,7 +191,7 @@ const TodoCommentsReplies: React.FC<TodoCommentsRepliesProps> = ({
       </Typography>
       {comments.map((comment: TodoCommentWithReply) => (
         <div>
-          {editingComment === comment.id ? (
+          {editingComment === comment.id && (
             <div className={classes.container}>
               <TextField
                 value={editingCommentValue}
@@ -218,7 +218,8 @@ const TodoCommentsReplies: React.FC<TodoCommentsRepliesProps> = ({
                 Cancel
               </Button>
             </div>
-          ) : (
+          )}
+          {editingComment !== comment.id && (
             <FeedbackCard
               currentUser={user ? user.username : ""}
               canReply
